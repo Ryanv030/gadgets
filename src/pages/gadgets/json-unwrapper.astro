@@ -1,0 +1,14 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import JsonUnwrapper from '../../components/JsonUnwrapper'
+---
+
+<Layout title="JSON Unwrapper" description="Recursively unwrap stringified JSON and cut through LangChain wrapper noise">
+  <div class="mb-8">
+    <a href="/" class="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">&larr; all gadgets</a>
+  </div>
+  <h1 class="text-3xl font-bold tracking-tight mb-2">JSON Unwrapper</h1>
+  <p class="text-zinc-400 mb-8">Paste gnarly nested/escaped JSON. Recursively unescapes stringified values and renders a collapsible tree. LangChain metadata gets dimmed.</p>
+
+  <JsonUnwrapper client:load />
+</Layout>
