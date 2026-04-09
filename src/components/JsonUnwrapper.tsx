@@ -35,17 +35,67 @@ const LC_NOISE_KEYS = new Set([
   'lc', 'type', 'id', 'additional_kwargs', 'response_metadata', 'metadata',
 ])
 
-// Extract the "interesting" content from a LangChain message
-function extractLcContent(obj: unknown): { extracted: unknown; isLc: boolean } {
-  if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {
-    return { extracted: obj, isLc: false }
+// Sentinel type for deserialized LC classes
+interface LcClassInstance {
+  __lcClass: string
+  __lcModule: string
+  props: Record<string, unknown>
+}
+
+function isLcClass(value: unknown): value is LcClassInstance {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    '__lcClass' in (value as Record<string, unknown>)
+  )
+}
+
+// Detect LC serialized constructor pattern and extract class name from id array
+function isLcSerialized(obj: Record<string, unknown>): boolean {
+  return (
+    obj.lc !== undefined &&
+    obj.type === 'constructor' &&
+    Array.isArray(obj.id) &&
+    obj.kwargs !== undefined
+  )
+}
+
+function getLcClassName(id: string[]): string {
+  return id[id.length - 1] || 'Unknown'
+}
+
+function getLcModule(id: string[]): string {
+  return id.slice(0, -1).join('.')
+}
+
+// Recursively reconstruct LC classes throughout the tree
+function deserializeLc(value: unknown): unknown {
+  if (value === null || typeof value !== 'object') return value
+  if (Array.isArray(value)) return value.map(deserializeLc)
+
+  const record = value as Record<string, unknown>
+
+  if (isLcSerialized(record)) {
+    const id = record.id as string[]
+    const kwargs = record.kwargs as Record<string, unknown>
+    // Recursively deserialize inside kwargs too
+    const props: Record<string, unknown> = {}
+    for (const [k, v] of Object.entries(kwargs)) {
+      props[k] = deserializeLc(v)
+    }
+    return {
+      __lcClass: getLcClassName(id),
+      __lcModule: getLcModule(id),
+      props,
+    } satisfies LcClassInstance
   }
-  const record = obj as Record<string, unknown>
-  // Detect LangChain constructor pattern
-  if (record.lc !== undefined && record.kwargs !== undefined) {
-    return { extracted: record.kwargs, isLc: true }
+
+  // Regular object — recurse into values
+  const result: Record<string, unknown> = {}
+  for (const [k, v] of Object.entries(record)) {
+    result[k] = deserializeLc(v)
   }
-  return { extracted: obj, isLc: false }
+  return result
 }
 
 function CopyButton({ text }: { text: string }) {
@@ -162,6 +212,34 @@ function JsonNode({
     )
   }
 
+  // LC deserialized class instance
+  if (isLcClass(value)) {
+    const entries = Object.entries(value.props)
+    return (
+      <div>
+        <Line keyName={keyName}>
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="flex items-center gap-2"
+          >
+            <span className="text-sky-400 font-semibold">{value.__lcClass}</span>
+            <span className="text-zinc-600 text-xs">{value.__lcModule}</span>
+            <span className="text-zinc-500 hover:text-zinc-300 text-xs">
+              {collapsed ? `{${entries.length} props} ▸` : '▾'}
+            </span>
+          </button>
+        </Line>
+        {!collapsed && (
+          <div className="ml-5 border-l border-sky-900/50 pl-3">
+            {entries.map(([k, v]) => (
+              <JsonNode key={k} keyName={k} value={v} depth={depth + 1} />
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+
   if (typeof value === 'object') {
     const entries = Object.entries(value as Record<string, unknown>)
     if (entries.length === 0) {
@@ -235,7 +313,7 @@ function isEmptyOrMeta(value: unknown): boolean {
   return false
 }
 
-type ViewMode = 'unwrapped' | 'extracted' | 'raw'
+type ViewMode = 'unwrapped' | 'deserialized' | 'raw'
 
 export default function JsonUnwrapper() {
   const [input, setInput] = useState('')
@@ -255,9 +333,8 @@ export default function JsonUnwrapper() {
     if (!parsed) return null
     if (mode === 'raw') return parsed
     const unwrapped = deepUnwrap(parsed)
-    if (mode === 'extracted') {
-      const { extracted } = extractLcContent(unwrapped)
-      return extracted
+    if (mode === 'deserialized') {
+      return deserializeLc(unwrapped)
     }
     return unwrapped
   }, [parsed, mode])
@@ -285,7 +362,7 @@ export default function JsonUnwrapper() {
       {parsed && (
         <div className="flex items-center gap-2">
           <div className="flex rounded-lg border border-zinc-700 overflow-hidden">
-            {(['unwrapped', 'extracted', 'raw'] as const).map((m) => (
+            {(['unwrapped', 'deserialized', 'raw'] as const).map((m) => (
               <button
                 key={m}
                 onClick={() => setMode(m)}
@@ -295,7 +372,7 @@ export default function JsonUnwrapper() {
                     : 'text-zinc-500 hover:text-zinc-300'
                 }`}
               >
-                {m === 'unwrapped' ? 'Unwrapped' : m === 'extracted' ? 'Extract Content' : 'Raw'}
+                {m === 'unwrapped' ? 'Unwrapped' : m === 'deserialized' ? 'Deserialized' : 'Raw'}
               </button>
             ))}
           </div>
