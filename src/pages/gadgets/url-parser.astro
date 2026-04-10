@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro'
-import UrlParser from '../../components/UrlParser'
+import UrlParserWidget from '../../components/UrlParser'
 ---
 
 <Layout title="URL Parser" description="Decode, encode, and break down URLs into readable components">
@@ -10,5 +10,5 @@ import UrlParser from '../../components/UrlParser'
   <h1 class="text-3xl font-bold tracking-tight mb-2">URL Parser</h1>
   <p class="text-zinc-400 mb-8">Paste a URL to decode it and see each component broken out.</p>
 
-  <UrlParser client:load />
+  <UrlParserWidget client:load />
 </Layout>

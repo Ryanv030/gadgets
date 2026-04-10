@@ -1,0 +1,14 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import Base64Tool from '../../components/Base64Tool'
+---
+
+<Layout title="Base64 Encode/Decode" description="Encode and decode base64 strings with JSON pretty-printing">
+  <div class="mb-8">
+    <a href="/" class="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">&larr; all gadgets</a>
+  </div>
+  <h1 class="text-3xl font-bold tracking-tight mb-2">Base64</h1>
+  <p class="text-zinc-400 mb-8">Encode or decode base64. Auto-detects and pretty-prints JSON payloads.</p>
+
+  <Base64Tool client:load />
+</Layout>

@@ -1,0 +1,14 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import DiffViewer from '../../components/DiffViewer'
+---
+
+<Layout title="Diff Viewer" description="Compare two blocks of text with inline diff highlighting">
+  <div class="mb-8">
+    <a href="/" class="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">&larr; all gadgets</a>
+  </div>
+  <h1 class="text-3xl font-bold tracking-tight mb-2">Diff Viewer</h1>
+  <p class="text-zinc-400 mb-8">Paste two blocks of text to see what changed. Line-by-line diff with line numbers.</p>
+
+  <DiffViewer client:load />
+</Layout>

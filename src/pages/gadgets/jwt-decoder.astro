@@ -1,0 +1,14 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import JwtDecoder from '../../components/JwtDecoder'
+---
+
+<Layout title="JWT Decoder" description="Decode JWT tokens and see header, payload, and expiry status">
+  <div class="mb-8">
+    <a href="/" class="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">&larr; all gadgets</a>
+  </div>
+  <h1 class="text-3xl font-bold tracking-tight mb-2">JWT Decoder</h1>
+  <p class="text-zinc-400 mb-8">Paste a JWT to decode the header and payload. Shows expiry status.</p>
+
+  <JwtDecoder client:load />
+</Layout>

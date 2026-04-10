@@ -1,0 +1,14 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import CronExplainer from '../../components/CronExplainer'
+---
+
+<Layout title="Cron Explainer" description="Translate cron expressions into plain English with next run previews">
+  <div class="mb-8">
+    <a href="/" class="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">&larr; all gadgets</a>
+  </div>
+  <h1 class="text-3xl font-bold tracking-tight mb-2">Cron Explainer</h1>
+  <p class="text-zinc-400 mb-8">Paste a cron expression to see what it means in plain English and when it runs next.</p>
+
+  <CronExplainer client:load />
+</Layout>

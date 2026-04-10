@@ -1,0 +1,14 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import ColorConverter from '../../components/ColorConverter'
+---
+
+<Layout title="Color Converter" description="Convert between hex, RGB, HSL, and OKLCH color formats">
+  <div class="mb-8">
+    <a href="/" class="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">&larr; all gadgets</a>
+  </div>
+  <h1 class="text-3xl font-bold tracking-tight mb-2">Color Converter</h1>
+  <p class="text-zinc-400 mb-8">Paste a color in any format to see it converted to hex, RGB, HSL, and OKLCH.</p>
+
+  <ColorConverter client:load />
+</Layout>

@@ -1,0 +1,14 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import RegexTester from '../../components/RegexTester'
+---
+
+<Layout title="Regex Tester" description="Test regular expressions with live highlighting and capture groups">
+  <div class="mb-8">
+    <a href="/" class="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">&larr; all gadgets</a>
+  </div>
+  <h1 class="text-3xl font-bold tracking-tight mb-2">Regex Tester</h1>
+  <p class="text-zinc-400 mb-8">Test patterns with live match highlighting and named capture group extraction.</p>
+
+  <RegexTester client:load />
+</Layout>
