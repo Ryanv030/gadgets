@@ -3,12 +3,12 @@ import Layout from '../../layouts/Layout.astro'
 import TimestampConverter from '../../components/TimestampConverter'
 ---
 
-<Layout title="Timestamp Converter" description="Convert between Unix timestamps, ISO 8601, and human-readable dates">
+<Layout title="Timestamp Converter" description="Convert between Unix timestamps, Google Sheets serials, ISO 8601, and human-readable dates">
   <div class="mb-8">
     <a href="/" class="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">&larr; all gadgets</a>
   </div>
   <h1 class="text-3xl font-bold tracking-tight mb-2">Timestamp Converter</h1>
-  <p class="text-zinc-400 mb-8">Paste a Unix timestamp (seconds or ms), ISO date, or date string to see all formats.</p>
+  <p class="text-zinc-400 mb-8">Paste a Unix timestamp, Google Sheets serial (e.g. <code class="font-mono text-zinc-300">46141.9316</code>), ISO date, or date string to see all formats.</p>
 
   <TimestampConverter client:load />
 </Layout>
